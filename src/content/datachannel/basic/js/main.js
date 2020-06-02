@@ -12,8 +12,8 @@ let localConnection;
 let remoteConnection;
 let sendChannel;
 let receiveChannel;
-const dataChannelSend = document.querySelector('textarea#dataChannelSend');
-const dataChannelReceive = document.querySelector('textarea#dataChannelReceive');
+const dataChannelSend = document.querySelector('input#dataChannelSend');
+const dataChannelReceive = document.querySelector('input#dataChannelReceive');
 const startButton = document.querySelector('button#startButton');
 const sendButton = document.querySelector('button#sendButton');
 const closeButton = document.querySelector('button#closeButton');
@@ -31,7 +31,6 @@ function disableSendButton() {
 }
 
 function createConnection() {
-  dataChannelSend.placeholder = '';
   const servers = null;
   window.localConnection = localConnection = new RTCPeerConnection(servers);
   console.log('Created local peer connection object localConnection');
@@ -54,8 +53,8 @@ function createConnection() {
   remoteConnection.ondatachannel = receiveChannelCallback;
 
   localConnection.createOffer().then(
-      gotDescription1,
-      onCreateSessionDescriptionError
+    gotDescription1,
+    onCreateSessionDescriptionError
   );
   startButton.disabled = true;
   closeButton.disabled = false;
@@ -97,8 +96,8 @@ function gotDescription1(desc) {
   console.log(`Offer from localConnection\n${desc.sdp}`);
   remoteConnection.setRemoteDescription(desc);
   remoteConnection.createAnswer().then(
-      gotDescription2,
-      onCreateSessionDescriptionError
+    gotDescription2,
+    onCreateSessionDescriptionError
   );
 }
 
@@ -118,11 +117,11 @@ function getName(pc) {
 
 function onIceCandidate(pc, event) {
   getOtherPc(pc)
-      .addIceCandidate(event.candidate)
-      .then(
-          () => onAddIceCandidateSuccess(pc),
-          err => onAddIceCandidateError(pc, err)
-      );
+    .addIceCandidate(event.candidate)
+    .then(
+      () => onAddIceCandidateSuccess(pc),
+      err => onAddIceCandidateError(pc, err)
+    );
   console.log(`${getName(pc)} ICE candidate: ${event.candidate ? event.candidate.candidate : '(null)'}`);
 }
 
@@ -143,23 +142,23 @@ function receiveChannelCallback(event) {
 }
 
 function onReceiveMessageCallback(event) {
-  console.log('Received Message');
+  console.log('Received Message', event.data);
   dataChannelReceive.value = event.data;
 }
 
 function onSendChannelStateChange() {
   const readyState = sendChannel.readyState;
   console.log('Send channel state is: ' + readyState);
-  if (readyState === 'open') {
-    dataChannelSend.disabled = false;
-    dataChannelSend.focus();
-    sendButton.disabled = false;
-    closeButton.disabled = false;
-  } else {
+  //if (readyState === 'open') {
+  dataChannelSend.disabled = false;
+  dataChannelSend.focus();
+  sendButton.disabled = false;
+  closeButton.disabled = false;
+  /*} else {
     dataChannelSend.disabled = true;
     sendButton.disabled = true;
     closeButton.disabled = true;
-  }
+  }*/
 }
 
 function onReceiveChannelStateChange() {
